@@ -26,6 +26,10 @@ const protagonista = {
     jogarDado6: function () {
         return Math.floor(Math.random() * 6 + 1);
     },
+    jogarDado12: function () {
+        return Math.floor(Math.random() * 12 + 1);
+    },
+    poderBelico: 0,
 };
 
 let contadorDias = 0;
@@ -65,18 +69,33 @@ while (protagonista.vivo === true) {
             protagonista.mantimentos += 2;
         } else if (escolhaMantimentos === 3) {
             console.log("Você decide procurar em ambos os locais.");
-            console.log(
-                "Infelizmente voce se deparou com um grupo enorme de zumbis e eles te mataram."
-            );
-            protagonista.vivo = false;
-            continue;
+            let dado12 = protagonista.jogarDado12();
+            if (dado12 >= 8) {
+                console.log(
+                    `${protagonista.nome} você deu muita sorte e encontra 8 mantimentos!`
+                );
+                protagonista.mantimentos += 8;
+                prompt("Tecle enter para continuar...");
+            } else if (dado12 <= 6) {
+                console.log(
+                    `${protagonista.nome} você deu sorte e encontra 4 mantimentos!`
+                );
+                protagonista.mantimentos += 4;
+                prompt("Tecle enter para continuar...");
+            } else if (dado12 < 5) {
+                console.log(
+                    `${protagonista.nome} você não teve sorte e encontra apenas 2 mantimentos...`
+                );
+                protagonista.mantimentos += 2;
+                prompt("Tecle enter para continuar...");
+            }
         }
     }
     console.log(`
     Nome: ${protagonista.nome}\tIdade: ${protagonista.idade}
     Sorte: ${protagonista.sorte}\tAzar: ${protagonista.azar}
-    Mantimentos:${protagonista.mantimentos}
-    `)
+    Mantimentos:${protagonista.mantimentos}\tPoder Bélico: ${protagonista.poderBelico}
+    `);
     console.log(
         `É o dia ${contadorDias}º, voce acorda e precisa decidir o que fazer hoje!`
     );
@@ -95,18 +114,39 @@ while (protagonista.vivo === true) {
         [3] - Ambos os locais`);
         let escolhaArmas = +prompt("Digite sua escolha: ");
         if (escolhaArmas === 1) {
-            console.log("Você decidiu ir atrás da delegacia.");
+            console.log("Você decidiu ir atrás da delegacia e recebeu +4 de poder bélico.");
+            protagonista.poderBelico += 4;
             protagonista.fome = true;
+            prompt("Tecle enter para continuar...");
         } else if (escolhaArmas === 2) {
-            console.log("Voce decidiu ir até a loja de armas.");
+            console.log("Voce decidiu ir até a loja de armas e recebeu +2 de poder bélico.");
+            protagonista.poderBelico += 2;
             protagonista.fome = true;
+            prompt("Tecle enter para continuar...");
         } else if (escolhaArmas === 3) {
-            console.log("Você decide procurar em ambos os locais.");
-            console.log(
-                "Infelizmente voce se deparou com um grupo enorme de zumbis e eles te mataram."
-            );
-            protagonista.vivo = false;
-            continue;
+            let dado12 = protagonista.jogarDado12();
+            if (dado12 >= 8) {
+                console.log(
+                    `${protagonista.nome} você deu muita sorte e encontrou armas. Recebeu +8 de poder bélico!`
+                );
+                protagonista.poderBelico += 8;
+                protagonista.fome = true;
+                prompt("Tecle enter para continuar...");
+            } else if (dado12 > 5 && dado12 <= 7) {
+                console.log(
+                    `${protagonista.nome} você deu sorte e encontrou munições. Recebeu +6 de poder bélico!`
+                );
+                protagonista.poderBelico += 6;
+                protagonista.fome = true;
+                prompt("Tecle enter para continuar...");
+            } else if (dado12 < 5) {
+                console.log(
+                    `${protagonista.nome} você não deu tanta sorte assim e encontra apenas algumas munições. Recebeu +2 de poder bélico!`
+                );
+                protagonista.poderBelico += 2;
+                protagonista.fome = true;
+                prompt("Tecle enter para continuar...");
+            }
         }
     } else if (escolhaDiaria === 2) {
         console.log(
@@ -116,19 +156,28 @@ while (protagonista.vivo === true) {
 
         if (protagonista.azar >= 5) {
             console.log(
-                "Vasculhando o perímetro, você encontra um grupo de zumbis. Que azar..."
+                "Vasculhando o perímetro, você encontra um grupo de zumbis..."
             );
-            console.log("O computador irá escolher o seu destino...");
-            let dado = protagonista.jogarDado6();
-            if (dado >= 3) {
-                console.log("Hoje é seu dia de sorte e você sobreviveu...");
+            if (protagonista.poderBelico >= 8) {
+                console.log(
+                    `${protagonista.nome} você estava bem preparado e sai tranquilamente daquela situação!`
+                );
+                protagonista.poderBelico -= 6;
                 protagonista.azar = 0;
+                prompt("Tecle enter para continuar...");
+            } else if (protagonista.poderBelico >= 4) {
+                console.log(
+                    `${protagonista.nome} por sorte você tinha armas e munições suficientes e consegue sair daquela situação...`
+                );
+                protagonista.poderBelico -= 4;
+                protagonista.azar = 0;
+                prompt("Tecle enter para continuar...");
             } else {
                 console.log(
-                    "Infelizmente não foi seu dia de sorte, e você morreu..."
+                    `${protagonista.nome} infelizmente seu poder bélico era insuficiente e você morre...`
                 );
                 protagonista.vivo = false;
-                continue;
+                prompt("Tecle enter para continuar...");
             }
         }
         protagonista.fome = true;
@@ -138,12 +187,20 @@ while (protagonista.vivo === true) {
             "Você decidiu procurar outros sobreviventes. Espero que consigamos achar alguém."
         );
         if (protagonista.sorte >= 5) {
-            console.log("FINALMENTE ENCONTRAMOS OUTRO SOBREVIVENTE!");
-            let novoSobrevivente = prompt(
-                "Digite o nome do novo sobrevivente: "
-            );
-            sobreviventes.push(novoSobrevivente);
-            protagonista.sorte = 0;
+            let dado6 = protagonista.jogarDado6();
+            if (dado6 >= 4) {
+                console.log("FINALMENTE ENCONTRAMOS OUTRO SOBREVIVENTE!");
+                let novoSobrevivente = prompt(
+                    "Digite o nome do novo sobrevivente: "
+                );
+                sobreviventes.push(novoSobrevivente);
+                protagonista.sorte = 0;
+            } else {
+                console.log(
+                    `${protagonista.nome} você deu azar e não encontramos outro sobrevivente... Sorte zerada!`
+                );
+                prompt("Tecle enter para continuar...");
+            }
         }
         protagonista.sorte += 1;
     }
