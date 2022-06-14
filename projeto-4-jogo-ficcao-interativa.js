@@ -1,5 +1,15 @@
 const prompt = require("prompt-sync")();
 console.clear();
+/* 
+Variáveis para armazenar os status do personagem. (1,0) FEITO
+Perguntas que alteram esses status do personagem. (1,0) FEITO
+Laço de repetição que determinará os ciclos onde a história vai se passar. Determinar o que acontecerá ao final do ciclo e como ficarão os status. (1,0) FEITO
+ Variável para controle da passagem do tempo. (1,0) FEITO
+ Variáveis de controle dos status e situações da história. (1,0) FEITO
+Condicionais para alterações dessas variáveis. (1,5) FEITO
+Funções para executar cada uma das tarefas. (1,5)  FEITO
+Conteúdo de condicionais, laços, funções e objetos bem aplicados. (2,0) FEITO
+ */
 
 const protagonista = {
     nome: "",
@@ -12,6 +22,9 @@ const protagonista = {
     comer: function () {
         this.fome = false;
         this.mantimentos--;
+    },
+    jogarDado6: function () {
+        return Math.floor(Math.random() * 6 + 1);
     },
 };
 
@@ -29,6 +42,7 @@ console.log(
     `Mas, milagrosamente, algumas pessoas conseguiram sobreviver e você ${protagonista.nome} é uma delas.`
 );
 console.log("Agora, você precisa continuar vivo o máximo que conseguir...");
+prompt("Tecle enter para continuar...");
 while (protagonista.vivo === true) {
     if (protagonista.fome === true && protagonista.mantimentos > 0) {
         protagonista.comer();
@@ -37,6 +51,7 @@ while (protagonista.vivo === true) {
         console.log(
             `${protagonista.nome}, seus mantimentos estão zerados. Você precisa urgentemente ir atrás de mais.`
         );
+        prompt("Tecle enter para continuar...");
         console.log(`Ao ler o mapa, você encontrou 2 lugares próximos que podem ter mantimentos. Qual local você deseja procurar?
         [1] - Um supermercado.
         [2] - Uma loja de conveniencia.
@@ -57,6 +72,11 @@ while (protagonista.vivo === true) {
             continue;
         }
     }
+    console.log(`
+    Nome: ${protagonista.nome}\tIdade: ${protagonista.idade}
+    Sorte: ${protagonista.sorte}\tAzar: ${protagonista.azar}
+    Mantimentos:${protagonista.mantimentos}
+    `)
     console.log(
         `É o dia ${contadorDias}º, voce acorda e precisa decidir o que fazer hoje!`
     );
@@ -99,12 +119,14 @@ while (protagonista.vivo === true) {
                 "Vasculhando o perímetro, você encontra um grupo de zumbis. Que azar..."
             );
             console.log("O computador irá escolher o seu destino...");
-            let dado = Math.floor(Math.random() * 6 + 1);
+            let dado = protagonista.jogarDado6();
             if (dado >= 3) {
                 console.log("Hoje é seu dia de sorte e você sobreviveu...");
                 protagonista.azar = 0;
             } else {
-                console.log("Infelizmente não foi seu dia de sorte, e você morreu...");
+                console.log(
+                    "Infelizmente não foi seu dia de sorte, e você morreu..."
+                );
                 protagonista.vivo = false;
                 continue;
             }
