@@ -6,15 +6,17 @@ const protagonista = {
     idade: 0,
     vivo: true,
     fome: false,
-    mantimentos: 0,
+    mantimentos: 5,
+    sorte: 0,
+    azar: 0,
     comer: function () {
         this.fome = false;
         this.mantimentos--;
     },
 };
 
-let qtdAcoes = 0;
 let contadorDias = 0;
+let sobreviventes = [];
 protagonista.nome = prompt("Digite o nome do protagonista: ");
 protagonista.idade = +prompt("Digite a idade do protagonista: ");
 console.log(
@@ -30,32 +32,6 @@ console.log("Agora, você precisa continuar vivo o máximo que conseguir...");
 while (protagonista.vivo === true) {
     if (protagonista.fome === true && protagonista.mantimentos > 0) {
         protagonista.comer();
-        protagonista.energia--;
-    } else if (protagonista.fome === true && protagonista.mantimentos === 0) {
-        console.log(
-            `${protagonista.nome}, seus mantimentos estão zerados e você está com fome. Você precisa urgentemente ir atrás de mais.`
-        );
-        console.log(`Ao ler o mapa, você encontrou 2 lugares próximos que podem ter mantimentos. Qual local você deseja procurar?
-        [1] - Um supermercado.
-        [2] - Uma loja de conveniencia.
-        [3] - Ambos os locais`);
-        let escolhaMantimentos = +prompt("Digite sua escolha: ");
-        if (escolhaMantimentos === 1) {
-            console.log("Você decidiu ir atrás do supermercado.");
-            protagonista.mantimentos += 4;
-            protagonista.comer();
-        } else if (escolhaMantimentos === 2) {
-            console.log("Voce decidiu ir até a loja de conveniencia.");
-            protagonista.mantimentos += 2;
-            protagonista.comer();
-        } else if (escolhaMantimentos === 3) {
-            console.log("Você decide procurar em ambos os locais.");
-            console.log(
-                "Infelizmente voce se deparou com um grupo enorme de zumbis e eles te mataram."
-            );
-            protagonista.vivo = false;
-            continue;
-        }
     }
     if (protagonista.mantimentos === 0) {
         console.log(
@@ -116,13 +92,38 @@ while (protagonista.vivo === true) {
         console.log(
             "Você decidiu vasculhar o perímetro. Vamos olhar ao redor e procurar zumbis."
         );
+        protagonista.azar += 1;
+
+        if (protagonista.azar >= 5) {
+            console.log(
+                "Vasculhando o perímetro, você encontra um grupo de zumbis. Que azar..."
+            );
+            console.log("O computador irá escolher o seu destino...");
+            let dado = Math.floor(Math.random() * 6 + 1);
+            if (dado >= 3) {
+                console.log("Hoje é seu dia de sorte e você sobreviveu...");
+                protagonista.azar = 0;
+            } else {
+                console.log("Infelizmente não foi seu dia de sorte, e você morreu...");
+                protagonista.vivo = false;
+                continue;
+            }
+        }
         protagonista.fome = true;
     } else if (escolhaDiaria === 3) {
         protagonista.fome = true;
-        qtdAcoes++;
         console.log(
             "Você decidiu procurar outros sobreviventes. Espero que consigamos achar alguém."
         );
+        if (protagonista.sorte >= 5) {
+            console.log("FINALMENTE ENCONTRAMOS OUTRO SOBREVIVENTE!");
+            let novoSobrevivente = prompt(
+                "Digite o nome do novo sobrevivente: "
+            );
+            sobreviventes.push(novoSobrevivente);
+            protagonista.sorte = 0;
+        }
+        protagonista.sorte += 1;
     }
     contadorDias++;
 }
