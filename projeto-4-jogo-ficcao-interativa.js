@@ -17,8 +17,9 @@ const protagonista = {
     vivo: true,
     fome: false,
     mantimentos: 5,
-    sorte: 0,
+    inteligencia: 0,
     azar: 0,
+    poderBelico: 0,
     comer: function () {
         this.fome = false;
         this.mantimentos--;
@@ -29,11 +30,11 @@ const protagonista = {
     jogarDado12: function () {
         return Math.floor(Math.random() * 12 + 1);
     },
-    poderBelico: 0,
 };
 
 let contadorDias = 0;
-let sobreviventes = [];
+let curaDescoberta = false;
+let progressoCura = 0;
 protagonista.nome = prompt("Digite o nome do protagonista: ");
 protagonista.idade = +prompt("Digite a idade do protagonista: ");
 console.log(
@@ -47,7 +48,7 @@ console.log(
 );
 console.log("Agora, você precisa continuar vivo o máximo que conseguir...");
 prompt("Tecle enter para continuar...");
-while (protagonista.vivo === true) {
+while (curaDescoberta===false && protagonista.vivo === true) {
     if (protagonista.fome === true && protagonista.mantimentos > 0) {
         protagonista.comer();
     }
@@ -76,25 +77,29 @@ while (protagonista.vivo === true) {
                 );
                 protagonista.mantimentos += 8;
                 prompt("Tecle enter para continuar...");
+                protagonista.fome = true;
             } else if (dado12 <= 6) {
                 console.log(
                     `${protagonista.nome} você deu sorte e encontra 4 mantimentos!`
                 );
                 protagonista.mantimentos += 4;
                 prompt("Tecle enter para continuar...");
+                protagonista.fome = true;
             } else if (dado12 < 5) {
                 console.log(
                     `${protagonista.nome} você não teve sorte e encontra apenas 2 mantimentos...`
                 );
                 protagonista.mantimentos += 2;
                 prompt("Tecle enter para continuar...");
+                protagonista.fome = true;
             }
         }
     }
     console.log(`
     Nome: ${protagonista.nome}\tIdade: ${protagonista.idade}
-    Sorte: ${protagonista.sorte}\tAzar: ${protagonista.azar}
+    Inteligencia: ${protagonista.inteligencia}\tAzar: ${protagonista.azar}
     Mantimentos:${protagonista.mantimentos}\tPoder Bélico: ${protagonista.poderBelico}
+    Progresso da vacina: ${progressoCura}%
     `);
     console.log(
         `É o dia ${contadorDias}º, voce acorda e precisa decidir o que fazer hoje!`
@@ -102,7 +107,7 @@ while (protagonista.vivo === true) {
     console.log(`
     [1] - Você decide ir procurar armas para se defender.
     [2] - Você decide vasculhar o perímetro e ter certeza de sua segurança.
-    [3] - Você decide procurar outros sobreviventes.`);
+    [3] - Você decide estudar o vírus para procurar a cura.`);
     let escolhaDiaria = +prompt("Digite sua escolha: ");
     if (escolhaDiaria === 1) {
         console.log(
@@ -114,12 +119,16 @@ while (protagonista.vivo === true) {
         [3] - Ambos os locais`);
         let escolhaArmas = +prompt("Digite sua escolha: ");
         if (escolhaArmas === 1) {
-            console.log("Você decidiu ir atrás da delegacia e recebeu +4 de poder bélico.");
+            console.log(
+                "Você decidiu ir atrás da delegacia e recebeu +4 de poder bélico."
+            );
             protagonista.poderBelico += 4;
             protagonista.fome = true;
             prompt("Tecle enter para continuar...");
         } else if (escolhaArmas === 2) {
-            console.log("Voce decidiu ir até a loja de armas e recebeu +2 de poder bélico.");
+            console.log(
+                "Voce decidiu ir até a loja de armas e recebeu +2 de poder bélico."
+            );
             protagonista.poderBelico += 2;
             protagonista.fome = true;
             prompt("Tecle enter para continuar...");
@@ -153,7 +162,6 @@ while (protagonista.vivo === true) {
             "Você decidiu vasculhar o perímetro. Vamos olhar ao redor e procurar zumbis."
         );
         protagonista.azar += 1;
-
         if (protagonista.azar >= 5) {
             console.log(
                 "Vasculhando o perímetro, você encontra um grupo de zumbis..."
@@ -178,31 +186,32 @@ while (protagonista.vivo === true) {
                 );
                 protagonista.vivo = false;
                 prompt("Tecle enter para continuar...");
+                break;
             }
         }
         protagonista.fome = true;
     } else if (escolhaDiaria === 3) {
-        protagonista.fome = true;
         console.log(
-            "Você decidiu procurar outros sobreviventes. Espero que consigamos achar alguém."
+            "Você decidiu estudar o vírus e procurar uma cura."
         );
-        if (protagonista.sorte >= 5) {
-            let dado6 = protagonista.jogarDado6();
-            if (dado6 >= 4) {
-                console.log("FINALMENTE ENCONTRAMOS OUTRO SOBREVIVENTE!");
-                let novoSobrevivente = prompt(
-                    "Digite o nome do novo sobrevivente: "
-                );
-                sobreviventes.push(novoSobrevivente);
-                protagonista.sorte = 0;
-            } else {
-                console.log(
-                    `${protagonista.nome} você deu azar e não encontramos outro sobrevivente... Sorte zerada!`
-                );
-                prompt("Tecle enter para continuar...");
+        if(protagonista.inteligencia >=7){
+            let jogarDado12 = protagonista.jogarDado12();
+            if(jogarDado12 >= 8){
+                progressoCura+=20;
+            }else if(jogarDado12 >= 6){
+                progressoCura+=15;
+            }else {
+                progressoCura+=10;
             }
+            protagonista.inteligencia = 0;
         }
-        protagonista.sorte += 1;
+        if(progressoCura >= 100){
+            console.log("Finalmente descobrimos uma cura!");
+            curaDescoberta = true;
+            prompt("Tecle enter para continuar...");
+        }
+        protagonista.fome = true;
+        protagonista.inteligencia += 1;
     }
     contadorDias++;
 }
